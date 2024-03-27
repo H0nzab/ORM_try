@@ -4,71 +4,105 @@ const prisma = new PrismaClient()
 
 async function main() {
     //WRITE - create, createMany
-    /*const user = await prisma.user.create({
-        data: {
-          email: 'viola@prisma.io',
-          name: 'Viola',
-        },
-      })*/
-
-      /*const createMany = await prisma.user.createMany({
-        data: [
-          { name: 'Bob', email: 'bob@prisma.io' },
-          { name: 'Bobo', email: 'bob@prisma.io' }, // Duplicate unique key!
-          { name: 'Yewande', email: 'yewande@prisma.io' },
-          { name: 'Angelique', email: 'angelique@prisma.io' },
-        ],
-        skipDuplicates: true, // Skip 'Bobo'
-      })*/
-
-
-      //READ - finaUnique, findMany, findFirst
-      /*const user = await prisma.user.findMany({
-        where: {
-            email: {
-                endsWith: 'prisma.io',
+        await prisma.user.create({
+            data: {
+            email: 'viola@prisma.io',
+            name: 'Viola',
             },
-        },
-        select: {
-            name: true,
-            email: true,
-            posts: {
-                select: {
-                    likes: true,
+        })
+
+        //READ - finaUnique, findMany, findFirst
+        /*const findUsers = await prisma.user.findMany({
+            where: {
+                email: {
+                    endsWith: 'prisma.io',
                 },
             },
-        },
-      })*/
+            select: {
+                name: true,
+                email: true,
+                posts: {
+                    select: {
+                        likes: true,
+                    },
+                },
+            },
+        })*/
 
-      // UPDATE - update, updateMany
-      /*const user = await prisma.user.update({
-        where:{
-            email: 'viola@prisma.io',
-        },
-        data: {
-            name: 'Viola de Magnificent',
-        },
+        // UPDATE - update, updateMany
+        await prisma.user.update({
+            where:{
+                email: 'viola@prisma.io',
+            },
+            data: {
+                name: 'Viola de Magnificent',
+            },
 
-      })*/
+        })
 
-      /*const user = await prisma.user.create({
-        data: {
-          email: 'honza@ssps.cz',
-          name: 'Honza',
-          profileViews: 20,
-          role: 'ADMIN',
-        },
-      })*/
-      /*const post = await prisma.post.createMany({
-        data: [
-            { title: "Ahoj všichni", published: true, authorId: 8, views: 7000, likes: 3000},
-            { title: "Ahoj", published: true, authorId: 8, views: 5000, likes: 2000},
-            { title: "Naxšéro", published: true, authorId: 8, views: 70000, likes: 30000},
-        ],
-        skipDuplicates: true,
-      })*/
-      console.log(post)
-  }
+        await prisma.user.create({
+            data: {
+            email: 'honza@ssps.cz',
+            name: 'Honza',
+            profileViews: 20,
+            role: 'ADMIN',
+            },
+        })
+
+        const findUserId = await prisma.user.findFirst({
+            where: {
+                name: 'Honza'
+            },
+            select:{
+                id: true,
+            },
+        })
+        console.log(findUserId);
+
+        await prisma.post.createMany({
+            data: [
+                { title: "Ahoj všichni", published: true, authorId: findUserId.id, views: 7000, likes: 3000},
+                { title: "Ahoj", published: true, authorId: findUserId.id, views: 5000, likes: 2000},
+                { title: "Naxšéro", published: true, authorId: findUserId.id, views: 70000, likes: 30000},
+            ],
+            skipDuplicates: true,
+        })
+        await prisma.category.createMany({
+            data: [
+                { name: 'vaření'},
+                { name: 'sport'},
+                { name: 'zivotjezivot'},
+            ],
+        })
+        const findCookingId = await prisma.category.findUnique({
+            where: {
+                name: 'vaření',
+            },
+            select: {
+                id: true,
+            },
+        })
+        const findSportId = await prisma.category.findUnique({
+            where: {name: 'sport',},
+            select: {id: true,},
+        })
+        const post = await prisma.post.create({
+            data: {
+                title: 'už to nedávám',
+                published: true,
+                authorId: findUserId.id,
+                views: 100,
+                likes: 100,
+            },
+        })
+        const postCategory = await prisma.postCategory.create({
+            data: {
+                postId: post.id,
+                categoryId: findSportId.id,
+            },
+        })
+        console.log("hotovo");
+    }
 
 main()
   .then(async () => {
