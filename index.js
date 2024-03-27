@@ -3,7 +3,6 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 async function main() {
-
     //WRITE - create, createMany
     /*const user = await prisma.user.create({
         data: {
@@ -51,7 +50,24 @@ async function main() {
         },
 
       })*/
-      console.log(user)
+
+      /*const user = await prisma.user.create({
+        data: {
+          email: 'honza@ssps.cz',
+          name: 'Honza',
+          profileViews: 20,
+          role: 'ADMIN',
+        },
+      })*/
+      /*const post = await prisma.post.createMany({
+        data: [
+            { title: "Ahoj všichni", published: true, authorId: 8, views: 7000, likes: 3000},
+            { title: "Ahoj", published: true, authorId: 8, views: 5000, likes: 2000},
+            { title: "Naxšéro", published: true, authorId: 8, views: 70000, likes: 30000},
+        ],
+        skipDuplicates: true,
+      })*/
+      console.log(post)
   }
 
 main()
